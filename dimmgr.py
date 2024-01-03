@@ -15,11 +15,14 @@ app.setQuitOnLastWindowClosed(False)
 pixmap = QPixmap()
 pixmap.loadFromData(icons_binary.icon_1f4a1)
 v_icon = QIcon(pixmap)
+pixmap.loadFromData(icons_binary.icon_1f3dd)
+isls_icon = QIcon(pixmap)
 pixmap.loadFromData(icons_binary.icon_1f31e)
 sun_icon = QIcon(pixmap)
 pixmap.loadFromData(icons_binary.icon_1f31b)
 moon_icon = QIcon(pixmap)
 
+holiday_value = 21600
 day_value = 3600
 night_value = 300
 
@@ -40,10 +43,16 @@ def update_status():
 
   if current == str(day_value):
     tray.setIcon(sun_icon)
+  elif current == str(holiday_value):
+    tray.setIcon(isls_icon)
   elif current == str(night_value):
     tray.setIcon(moon_icon)
   else:
     tray.setIcon(v_icon)
+
+
+def set_holiday():
+  set_value(holiday_value)
 
 
 def set_day():
@@ -66,11 +75,15 @@ def set_value(value):
 menu = QMenu()
 option_day = QAction('SET DAY')
 option_day.triggered.connect(set_day)
+option_holiday = QAction('SET HOLIDAY')
+option_holiday.triggered.connect(set_holiday)
 option_night = QAction('SET NIGHT')
 option_night.triggered.connect(set_night)
 menu.addAction(option_day)
+menu.addAction(option_holiday)
 menu.addAction(option_night)
 
+menu.addSeparator()
 quit = QAction('Quit')
 quit.triggered.connect(app.quit)
 menu.addAction(quit)
