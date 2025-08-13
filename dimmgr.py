@@ -22,9 +22,10 @@ sun_icon = QIcon(pixmap)
 pixmap.loadFromData(icons_binary.icon_1f31b)
 moon_icon = QIcon(pixmap)
 
+# KDE Plasma6: Minimum 30 sec; anything less is treated as 30 sec.
 holiday_value = 21600
 day_value = 3600
-night_value = 300
+night_value = 30
 
 tray = QSystemTrayIcon()
 tray.setIcon(v_icon)
@@ -32,8 +33,8 @@ tray.setVisible(True)
 
 
 def get_current_value():
-  cmd_str = (f'/usr/bin/kreadconfig5 --file {home}/.config/powermanagementprofilesrc '
-             '--group AC --group DPMSControl --key idleTime')
+  cmd_str = (f'/usr/bin/kreadconfig6 --file {home}/.config/powerdevilrc '
+             '--group AC --group Display --key TurnOffDisplayIdleTimeoutSec')
   result = subprocess.run(cmd_str, shell=True, stdout=subprocess.PIPE, text=True)
   return result.stdout.strip()
 
@@ -64,12 +65,15 @@ def set_night():
 
 
 def set_value(value):
-  cmd_str1 = (f'/usr/bin/kwriteconfig5 --file {home}/.config/powermanagementprofilesrc '
-              f'--group AC --group DPMSControl --key idleTime --type int {value}')
-  cmd_str2 = ('/usr/bin/qdbus org.kde.Solid.PowerManagement '
+  cmd_str1 = (f'/usr/bin/kwriteconfig6 --file {home}/.config/powerdevilrc '
+              f'--group AC --group Display --key TurnOffDisplayIdleTimeoutSec --type int {value}')
+  cmd_str2 = ('/usr/bin/qdbus6 org.kde.Solid.PowerManagement '
+              '/org/kde/Solid/PowerManagement org.kde.Solid.PowerManagement.reparseConfiguration')
+  cmd_str3 = ('/usr/bin/qdbus6 org.kde.Solid.PowerManagement '
               '/org/kde/Solid/PowerManagement org.kde.Solid.PowerManagement.refreshStatus')
   subprocess.run(cmd_str1, shell=True)
   subprocess.run(cmd_str2, shell=True)
+  subprocess.run(cmd_str3, shell=True)
 
 
 menu = QMenu()
